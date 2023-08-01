@@ -1,1 +1,1 @@
-# Receipe-Application
+# Recipe-Application
