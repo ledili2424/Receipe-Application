@@ -1,27 +1,65 @@
 import { async } from "regenerator-runtime";
+import { API_URL, RES_PER_PAGE } from "./config.js";
+import { getJSON } from "./helpers.js";
+
+//contains all the data about the application
 export const state = {
   recipe: {},
+  search: {
+    query: "",
+    results: [],
+    resultsPerPage: RES_PER_PAGE,
+  },
 };
 
 //change state object
 export const loadRecipe = async function (id) {
-  const res = await fetch(
-    `https://forkify-api.herokuapp.com/api/v2/recipes/${id}`
-  );
-  const data = await res.json();
-  if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+  try {
+    const data = await getJSON(`${API_URL}${id}`);
 
-  // create a recipe object for later use
-  const { recipe } = data.data;
-  state.recipe = {
-    id: recipe.id,
-    title: recipe.title,
-    publisher: recipe.publisher,
-    sourceUrl: recipe.source_url,
-    image: recipe.image_url,
-    servings: recipe.servings,
-    cookingTime: recipe.cooking_time,
-    ingredients: recipe.ingredients,
-  };
-  console.log(state.recipe);
+    // create a recipe object for later use
+    const { recipe } = data.data;
+    state.recipe = {
+      id: recipe.id,
+      title: recipe.title,
+      publisher: recipe.publisher,
+      sourceUrl: recipe.source_url,
+      image: recipe.image_url,
+      servings: recipe.servings,
+      cookingTime: recipe.cooking_time,
+      ingredients: recipe.ingredients,
+    };
+    // console.log(state.recipe);
+  } catch (err) {
+    //Temp error handling
+    console.error(`${err} boom`);
+    throw err;
+  }
+};
+
+export const loadSearchResults = async function (query) {
+  try {
+    state.search.query = query;
+
+    const data = await getJSON(`${API_URL}?search=${query}`);
+    // console.log(data);
+
+    state.search.results = data.data.recipes.map((rec) => {
+      return {
+        id: rec.id,
+        title: rec.title,
+        publisher: rec.publisher,
+        image: rec.image_url,
+      };
+    });
+  } catch (err) {
+    console.error(`${err} boom`);
+    throw err;
+  }
+};
+
+export const getSearchResultsPage = function (page) {
+  const start = (page - 1) * state.search.results.resultsPerPage;
+  const end = page * state.search.results.resultsPerPage;
+  return state.search.results.slice(start, end);
 };
