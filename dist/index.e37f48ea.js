@@ -602,7 +602,7 @@ const controlRecipes = async function() {
         if (!id) return;
         (0, _recipeViewJsDefault.default).renderSpinner();
         //0) Update results view to mark selected search result
-        (0, _resultsViewJsDefault.default).update(_modelJs.getSearchResultsPage);
+        (0, _resultsViewJsDefault.default).update(_modelJs.getSearchResultsPage());
         // 1) Loading recipe
         await _modelJs.loadRecipe(id); //one async function calling another
         //2) Rendering recipe
@@ -2097,6 +2097,7 @@ const loadSearchResults = async function(query) {
                 image: rec.image_url
             };
         });
+        state.search.page = 1;
     } catch (err) {
         console.error(`${err} boom`);
         throw err;
