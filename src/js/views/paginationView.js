@@ -10,16 +10,15 @@ class paginationView extends View {
       if (!btn) return;
 
       const goToPage = +btn.dataset.goto;
-      // console.log(goToPage);
       handler(goToPage);
     });
   }
+
   _generateMarkup() {
     const curPage = this._data.page;
     const numPages = Math.ceil(
       this._data.results.length / this._data.resultsPerPage
     );
-    // console.log(numPages);
     //Page1, and there are other pages
     if (curPage === 1 && numPages > 1) {
       return _generateNxtBtn(curPage);
