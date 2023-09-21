@@ -656,7 +656,6 @@ const controlAddRecipe = async function(newRecipe) {
         (0, _addRecipeViewJsDefault.default).renderSpinner();
         // Upload the new recipe data
         await _modelJs.uploadRecipe(newRecipe);
-        console.log(_modelJs.state.recipe);
         // Render recipe
         (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
         // Success message
@@ -672,10 +671,12 @@ const controlAddRecipe = async function(newRecipe) {
         // Close form window
         setTimeout(function() {
             (0, _addRecipeViewJsDefault.default).toggleWindow();
+            location.reload();
         }, (0, _configJs.MODAL_CLOSE_SEC) * 1000);
     } catch (err) {
-        console.error("\uD83D\uDCA5", err);
+        // console.error("💥", err);
         (0, _addRecipeViewJsDefault.default).renderError(err.message);
+        location.reload();
     }
 };
 const init = function() {
@@ -2148,8 +2149,7 @@ const loadRecipe = async function(id) {
 const loadSearchResults = async function(query) {
     try {
         state.search.query = query;
-        const data = await (0, _helpersJs.AJAX)(`${(0, _configJs.API_URL)}?search=${query}?key=${(0, _configJs.KEY)}`);
-        // console.log(data);
+        const data = await (0, _helpersJs.AJAX)(`${(0, _configJs.API_URL)}?search=${query}&key=${(0, _configJs.KEY)}`);
         state.search.results = data.data.recipes.map((rec)=>{
             return {
                 id: rec.id,
@@ -2229,7 +2229,6 @@ const uploadRecipe = async function(newRecipe) {
             servings: +newRecipe.servings,
             ingredients
         };
-        console.log(recipe);
         const data = await (0, _helpersJs.AJAX)(`${(0, _configJs.API_URL)}?key=${(0, _configJs.KEY)}`, recipe);
         state.recipe = createRecipeObject(data);
         addBookmark(state.recipe);
